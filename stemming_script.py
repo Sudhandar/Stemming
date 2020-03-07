@@ -14,17 +14,17 @@ def only_middle(stem_data,data):
    
     """
     
-    center_drugs=pd.DataFrame()
+    center_hits=pd.DataFrame()
     center = stem_data[stem_data['stem'].str.contains("^\-(.*)\-$",regex=True)]
     center['stem']= center['stem'].str.replace("-","",regex=True)
     for i in range(len(center)):
         center_terms = "[^ ]+("+ str(center.iloc[i]['stem'])+")[^ ]+"
         df = data[data['term'].str.contains(center_terms,regex=True,na=False)] 
         df['stem']=center.iloc[i]['stem']
-        center_drugs = center_drugs.append(df)
-    center_drugs['stem']=center_drugs['stem'].apply(lambda x: '-'+str(x)+'-')
+        center_hits = center_hits.append(df)
+    center_hits['stem']=center_hits['stem'].apply(lambda x: '-'+str(x)+'-')
     
-    return center_drugs
+    return center_hits
 
 def middle(stem_data,data):
     
@@ -38,17 +38,17 @@ def middle(stem_data,data):
         ranbolterm
     """
 
-    center_drugs=pd.DataFrame()
+    center_hits=pd.DataFrame()
     center = stem_data[stem_data['stem'].str.contains("^\-(.*)\-$",regex=True)]
     center['stem']= center['stem'].str.replace("-","",regex=True)
     for i in range(len(center)):
         center_terms = ".+("+ str(center.iloc[i]['stem'])+").+"
         df = data[data['term'].str.contains(center_terms,regex=True,na=False)] 
         df['stem']=center.iloc[i]['stem']
-        center_drugs = center_drugs.append(df)
-    center_drugs['stem']=center_drugs['stem'].apply(lambda x: '-'+str(x)+'-')
+        center_hits = center_hits.append(df)
+    center_hits['stem']=center_hits['stem'].apply(lambda x: '-'+str(x)+'-')
     
-    return center_drugs
+    return center_hits
 
 def starts(stem_data,data):
     """
@@ -63,7 +63,7 @@ def starts(stem_data,data):
     """
         
     
-    begin_drugs = pd.DataFrame()
+    begin_hits = pd.DataFrame()
     begin = stem_data[stem_data['stem'].str.contains("^[a-z]+\-$",regex=True)]
     begin['stem'] = begin['stem'].str.replace("-","",regex=True)
 
@@ -71,10 +71,10 @@ def starts(stem_data,data):
         begin_terms = "^"+str(begin.iloc[i]['stem'])
         df = data[data['term'].str.contains(begin_terms,regex=True,na=False)] 
         df['stem']=begin.iloc[i]['stem']
-        begin_drugs = begin_drugs.append(df)
-    begin_drugs['stem']=begin_drugs['stem'].apply(lambda x: str(x)+'-')
+        begin_hits = begin_hits.append(df)
+    begin_hits['stem']=begin_hits['stem'].apply(lambda x: str(x)+'-')
 
-    return begin_drugs
+    return begin_hits
 
 def ends(stem_data,data):
     """
@@ -88,7 +88,7 @@ def ends(stem_data,data):
     """
     
     
-    end_drugs = pd.DataFrame()
+    end_hits = pd.DataFrame()
     end = stem_data[stem_data['stem'].str.contains(r'^\-[a-z]+',regex=True)]
     end = end[end['stem'].str[-1]!='-']
     end['stem'] = end['stem'].str.replace("-","",regex=True)
@@ -97,10 +97,10 @@ def ends(stem_data,data):
         end_terms = ".+("+str(end.iloc[i]['stem'])+")$"
         df = data[data['term'].str.contains(end_terms,regex=True,na=False)] 
         df['stem']=end.iloc[i]['stem']
-        end_drugs = end_drugs.append(df)
-    end_drugs['stem']=end_drugs['stem'].apply(lambda x: '-'+str(x))
+        end_hits = end_hits.append(df)
+    end_hits['stem']=end_hits['stem'].apply(lambda x: '-'+str(x))
     
-    return end_drugs
+    return end_hits
 
 def stemming(stem_data,data):
     
@@ -115,11 +115,11 @@ def stemming(stem_data,data):
 data = pd.read_csv("df_roots.csv")
 data=data.drop_duplicates()
 stem_data = pd.read_csv("usan_stems.csv")
-s,m,e,out=stemming(stem_data,data)
+starting,middle_hits,ending,output=stemming(stem_data,data)
 
 test=starts(stem_data,data)
 
-output_file_name = "drugs_missing_usan_stems"
+output.to_csv("hits_output.csv",index=False)
     
     
     
